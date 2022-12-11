@@ -3,8 +3,12 @@ import PostSmall from "../components/PostSmall";
 import Button from "../components/Button";
 import { useRouter } from "next/router";
 
-export default function Home({ posts }) {
+async function prismaTest() {}
+
+export default function Home({ posts, usertest }) {
   const router = useRouter();
+
+  console.log(usertest);
 
   return (
     <>
@@ -33,6 +37,16 @@ export default function Home({ posts }) {
 }
 
 export async function getServerSideProps() {
+  // await prisma.user.deleteMany();
+  const usertest = await prisma.user.create({
+    data: {
+      name: "John Doe",
+      email: "john@gmail.com",
+      userPreferences: { create: { theme: "dark" } },
+    },
+    include: { userPreferences: true },
+  });
+
   // will always run on the server
   // newest first
   const posts = await prisma.post.findMany({
@@ -43,6 +57,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
+      usertest: JSON.parse(JSON.stringify(usertest)),
       posts: JSON.parse(JSON.stringify(posts)),
     },
   };
