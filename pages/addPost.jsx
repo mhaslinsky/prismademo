@@ -12,7 +12,6 @@ export default function Profile({ user }) {
       language,
       code,
     });
-    console.log("posting: " + data);
   };
 
   return (

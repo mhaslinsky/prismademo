@@ -11,19 +11,25 @@ export default async function handler(req, res) {
 
   switch (method) {
     case "POST":
+      let post;
       const { language, code } = req.body;
       const title = titleFromCode(code);
-      const post = await prisma.post.create({
-        data: {
-          title,
-          language,
-          code,
-        },
-      });
+      try {
+        post = await prisma.post.create({
+          data: {
+            title,
+            language,
+            code,
+          },
+        });
+
+        console.log(post);
+      } catch (err) {
+        res.status(500).json({ message: "Error creating post" });
+        return null;
+      }
       res.status(201).json(post);
       break;
-    case "GET":
-
     default:
       res.setHeader("Allow", ["POST"]);
       res.status(405).end(`Method ${method} Not Allowed`);

@@ -37,11 +37,13 @@ export default function Home({ posts, usertest }) {
 }
 
 export async function getServerSideProps() {
-  // await prisma.user.deleteMany();
+  await prisma.user.deleteMany();
+
   const usertest = await prisma.user.create({
     data: {
       name: "John Doe",
       email: "john@gmail.com",
+      password: "password",
       userPreferences: { create: { theme: "dark" } },
     },
     include: { userPreferences: true },
@@ -55,8 +57,12 @@ export async function getServerSideProps() {
     },
   });
 
+  console.log(usertest);
+
   return {
     props: {
+      //JS date objs are not serializable, so this is a hacky workaround
+      //can also use superjson here like t3 app
       usertest: JSON.parse(JSON.stringify(usertest)),
       posts: JSON.parse(JSON.stringify(posts)),
     },
